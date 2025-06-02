@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": " ",
+    "project_id": "ticketing-app---client-73f49",
+    "storage_bucket": "ticketing-app---client-73f49.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740785238381:android:1ee9d824668c78ed0f2a64",
+        "android_client_info": {
+          "package_name": "com.novel.ticketingappclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8uryofLNhb0vKkjy_aCzo3k6ezvsSLg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
