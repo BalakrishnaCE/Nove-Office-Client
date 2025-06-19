@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet, Alert, Platform } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Alert, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native';
 import Constants from 'expo-constants';
@@ -12,7 +12,8 @@ const DEFAULT_URL = 'https://erpnoveloffice.in/client-dashboard/dashboard';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
@@ -41,31 +42,45 @@ export default function App() {
         });
       }
 
-      if (Device.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
+      if (!Device.isDevice) {
+        Alert.alert('Push Notifications', 'Must use physical device for Push Notifications');
+        return;
+      }
 
-        if (existingStatus !== 'granted') {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
 
-        if (finalStatus !== 'granted') {
-          Alert.alert('Failed to get push token for push notification!');
-          return;
-        }
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
 
+      if (finalStatus !== 'granted') {
+        Alert.alert('Failed to get push token for push notification!');
+        return;
+      }
+
+      try {
+        const projectId = Constants.expoConfig.extra.eas.projectId;
+        console.log('Getting push token with projectId:', projectId);
+        
         const tokenData = await Notifications.getExpoPushTokenAsync({
-          projectId: Constants.expoConfig.extra.eas.projectId,
+          projectId: projectId,
         });
-        setExpoToken(tokenData.data);
-        console.log('Push token:', tokenData.data);
-      } else {
-        Alert.alert('Must use physical device for Push Notifications');
+        
+        const token = tokenData.data;
+        console.log('Push token:', token);
+        setExpoToken(token);
+      } catch (tokenError) {
+        console.error('Error getting push token:', tokenError);
+        Alert.alert(
+          'Push Token Error',
+          'Failed to get push token. Please check your internet connection and try again.'
+        );
       }
     } catch (error) {
-      console.error('Error registering for notifications:', error);
-      Alert.alert('An error occurred while registering for notifications.');
+      console.error('Error in registerForPushNotificationsAsync:', error);
+      Alert.alert('Error', 'Failed to set up push notifications');
     }
   };
 
@@ -78,7 +93,7 @@ export default function App() {
       const checkResponse = await fetch(`https://erpnoveloffice.in/api/resource/Expo Token/${email}-${token}`, {
         method: 'GET',
         headers: {
-          Authorization: `token ef122a54da1bfed:c9e9aece782cff4`,
+          Authorization: `token ef122a54da1bfed:a088d1a163848ac`,
         },
       });
 
@@ -89,7 +104,7 @@ export default function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `token ef122a54da1bfed:c9e9aece782cff4`,
+            Authorization: `token ef122a54da1bfed:a088d1a163848ac`,
           },
           body: JSON.stringify({
             name: `${email}-${token}`,
@@ -153,26 +168,37 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="dark" backgroundColor="#ffffff" />
+      <View style={styles.content}>
         {isLoading && (
           <ActivityIndicator style={styles.loader} size="large" />
         )}
         <WebView
-          style={{ flex: 1 }}
+          style={styles.webview}
           source={{ uri: DEFAULT_URL }}
           javaScriptEnabled={true}
           startInLoadingState={true}
           onLoad={handleWebViewLoad}
-          onMessage={handleOnMessage} // Handling onMessage event
+          onMessage={handleOnMessage}
         />
       </View>
-      <StatusBar style="auto" />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0
+  },
+  content: {
+    flex: 1
+  },
+  webview: {
+    flex: 1
+  },
   loader: {
     position: 'absolute',
     top: '50%',

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Novel Office",
     "slug": "tricketing-app-new",
-    "version": "1.0.9",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,9 +19,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "googleServicesFile": "google-services.json",
+      "googleServicesFile": "./google-services.json",
       "package": "com.novel.ticketingappclient",
-      "versionCode": 5
+      "versionCode": 10
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,9 +32,7 @@
       }
     },
     "owner": "novel_123",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.2.0",
     "updates": {
       "url": "https://u.expo.dev/83ad03a5-a2e4-40c5-9516-f1f74e5e6dc4"
     },
@@ -46,11 +44,24 @@
           "NSAllowsArbitraryLoads": true
         },
         "NSCameraUsageDescription": "This app needs access to the camera to allow users to take photos or videos for creating and submitting issue tickets. For example, users can take photos of a broken item or a problem in the office and attach it to their support ticket to provide visual context to the support team.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to allow users to select and upload photos for creating and submitting issue tickets. For example, users can choose existing photos of a problem to attach to their support ticket to provide visual context to the support team."
+        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to allow users to select and upload photos for creating and submitting issue tickets. For example, users can choose existing photos of a problem to attach to their support ticket to provide visual context to the support team.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "plugins": [
-      "expo-secure-store"
-    ]
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/notification.mp3"]
+        }
+      ]
+    ],
+    "cli": {
+      "appVersionSource": "remote"
+    }
   }
 }

@@ -3,12 +3,6 @@
     "version": ">= 8.0.0"
   },
   "build": {
-    // Uncomment the development block if you need a separate development client build configuration
-    // "development": {
-    //   "developmentClient": true,
-    //   "distribution": "internal",
-    //   "channel": "development"
-    // },
     "preview": {
       "distribution": "internal",
       "channel": "preview"
